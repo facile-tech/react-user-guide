@@ -141,33 +141,33 @@ class HelpText extends Component {
       const nodeMargin = 10;
 
       switch (position) {
-      case 'east':
-        this.node = applyStyle(this.node, {
-          left: `${nodeMargin + helpNeededElLeft + helpNeededElWidth}px`,
-          top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
-        });
-        break;
-      case 'west':
-        this.node = applyStyle(this.node, {
-          left: `${helpNeededElLeft - nodeWidth - nodeMargin}px`,
-          top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
-        });
-        break;
-      case 'north':
-        this.node = applyStyle(this.node, {
-          left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
-          top: `${helpNeededElTop - nodeHeight - nodeMargin}px`,
-        });
-        break;
-      case 'south':
-        this.node = applyStyle(this.node, {
-          left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
-          top: `${helpNeededElTop + helpNeededElHeight + nodeMargin}px`,
-        });
-        break;
+        case 'east':
+          this.node = applyStyle(this.node, {
+            left: `${nodeMargin + helpNeededElLeft + helpNeededElWidth}px`,
+            top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
+          });
+          break;
+        case 'west':
+          this.node = applyStyle(this.node, {
+            left: `${helpNeededElLeft - nodeWidth - nodeMargin}px`,
+            top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
+          });
+          break;
+        case 'north':
+          this.node = applyStyle(this.node, {
+            left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
+            top: `${helpNeededElTop - nodeHeight - nodeMargin}px`,
+          });
+          break;
+        case 'south':
+          this.node = applyStyle(this.node, {
+            left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
+            top: `${helpNeededElTop + helpNeededElHeight + nodeMargin}px`,
+          });
+          break;
 
-      default:
-        break;
+        default:
+          break;
       }
     }
   }
@@ -245,7 +245,8 @@ class UserGuide extends Component {
       PropTypes.array,
       PropTypes.element,
       PropTypes.string,
-    ]),
+    ]),    
+    skipModal: PropTypes.bool
   }
 
   static defaultProps = {
@@ -253,11 +254,12 @@ class UserGuide extends Component {
     guides: [],
     title: 'Quick Guide',
     content: 'Would you like us to walk you through different features in this app?',
-    buttonConfig: defaultButtonConfig
+    buttonConfig: defaultButtonConfig,    
+    skipModal: false,
   }
 
   constructor(props) {
-    super(props);
+    super(props);    
 
     this.state = {
       helpIndex: 0,
@@ -336,6 +338,7 @@ class UserGuide extends Component {
       guides,
       title,
       content,
+      skipModal,
     } = this.props;
     const { helpIndex, acceptedConfirm } = this.state;
     const helpConfig = guides[helpIndex] || {};
@@ -345,7 +348,7 @@ class UserGuide extends Component {
       return children || '';
     }
 
-    if (helpIndex === 0 && !acceptedConfirm) {
+    if (helpIndex === 0 && !acceptedConfirm && !skipModal) {
       return (
         <Fragment>
           {children || ''}
