@@ -53,6 +53,10 @@ class HelpText extends Component {
       PropTypes.element,
       PropTypes.string,
     ]),
+    guidesCounter: PropTypes.shape({
+      show: PropTypes.bool,
+      text: PropTypes.string,
+    }),
   }
 
   static defaultProps = {
@@ -98,6 +102,7 @@ class HelpText extends Component {
       nextText,
       skipText,
       finishText,
+      guidesCounter,
     } = this.props;
 
     const node = createElement('span', `userGuide--message ${styles.userGuideMessage} ${styles[`userGuideMessage${position}`]}`, '');
@@ -106,6 +111,11 @@ class HelpText extends Component {
     const nextButton = createElement('button', isLast ? 'finish' : 'next', isLast ? finishText : nextText);
 
     nextButton.addEventListener('click', onNext);
+
+    if (guidesCounter.show) {
+      const counter = createElement('span', styles.userGuideCounter, guidesCounter.text);
+      node.appendChild(counter);
+    }
 
     node.appendChild(titleEl);
     node.appendChild(messageEl);
@@ -141,33 +151,33 @@ class HelpText extends Component {
       const nodeMargin = 10;
 
       switch (position) {
-      case 'east':
-        this.node = applyStyle(this.node, {
-          left: `${nodeMargin + helpNeededElLeft + helpNeededElWidth}px`,
-          top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
-        });
-        break;
-      case 'west':
-        this.node = applyStyle(this.node, {
-          left: `${helpNeededElLeft - nodeWidth - nodeMargin}px`,
-          top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
-        });
-        break;
-      case 'north':
-        this.node = applyStyle(this.node, {
-          left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
-          top: `${helpNeededElTop - nodeHeight - nodeMargin}px`,
-        });
-        break;
-      case 'south':
-        this.node = applyStyle(this.node, {
-          left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
-          top: `${helpNeededElTop + helpNeededElHeight + nodeMargin}px`,
-        });
-        break;
+        case 'east':
+          this.node = applyStyle(this.node, {
+            left: `${nodeMargin + helpNeededElLeft + helpNeededElWidth}px`,
+            top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
+          });
+          break;
+        case 'west':
+          this.node = applyStyle(this.node, {
+            left: `${helpNeededElLeft - nodeWidth - nodeMargin}px`,
+            top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
+          });
+          break;
+        case 'north':
+          this.node = applyStyle(this.node, {
+            left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
+            top: `${helpNeededElTop - nodeHeight - nodeMargin}px`,
+          });
+          break;
+        case 'south':
+          this.node = applyStyle(this.node, {
+            left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
+            top: `${helpNeededElTop + helpNeededElHeight + nodeMargin}px`,
+          });
+          break;
 
-      default:
-        break;
+        default:
+          break;
       }
     }
   }
@@ -246,6 +256,7 @@ class UserGuide extends Component {
       PropTypes.element,
       PropTypes.string,
     ]),
+    showGuidesCounter: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -253,7 +264,8 @@ class UserGuide extends Component {
     guides: [],
     title: 'Quick Guide',
     content: 'Would you like us to walk you through different features in this app?',
-    buttonConfig: defaultButtonConfig
+    buttonConfig: defaultButtonConfig,
+    showGuidesCounter: false,
   }
 
   constructor(props) {
@@ -336,6 +348,7 @@ class UserGuide extends Component {
       guides,
       title,
       content,
+      showGuidesCounter,
     } = this.props;
     const { helpIndex, acceptedConfirm } = this.state;
     const helpConfig = guides[helpIndex] || {};
@@ -351,6 +364,7 @@ class UserGuide extends Component {
           {children || ''}
           <div className={`userGuide--modal ${styles.userGuideModal}`}>
             <div className={styles.userGuideModalContent}>
+              {showGuidesCounter && (<span className={styles.userGuideCounter}>1/{guides.length + 1}</span>)}
               <h1 className={styles.userGuideModalHeader}>{title}</h1>
               <p>{content}</p>
               <div>
@@ -368,7 +382,14 @@ class UserGuide extends Component {
     }
 
     return (
-      <HelpText {...helpConfig} nextText={this.getNextText()} skipText={this.getSkipText()} finishText={this.getFinishText()} onNext={this.onNext} onSkip={this.onSkip} isLast={isLast}>
+      <HelpText {...helpConfig}
+        nextText={this.getNextText()}
+        skipText={this.getSkipText()}
+        finishText={this.getFinishText()}
+        onNext={this.onNext}
+        onSkip={this.onSkip}
+        isLast={isLast}
+        guidesCounter={{ show: showGuidesCounter, text: (helpIndex + 2) + '/' + (guides.length + 1) }}>
         {children || ''}
       </HelpText>
     );
