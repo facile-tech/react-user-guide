@@ -61,7 +61,13 @@ const guides = [
 export default class App extends Component {
   render () {
     return (
-      <UserGuide buttonConfig={buttonConfig} guides={guides} skipModal={false} disableAutoScroll={false}>      
+      <UserGuide 
+        buttonConfig={buttonConfig} 
+        guides={guides} 
+        skipModal={false} 
+        disableAutoScroll={false} 
+        showGuidesCounter={false}
+      >            
         <div style={style} className="unique-classname">Target element</div>
       </UserGuide>
     )
@@ -126,6 +132,7 @@ export default class App extends Component {
 * buttonConfig *[ButtonConfig]* - Text used by different buttons
 * skipModal *[boolean]* - setting for don't show the Modal, only guides/tooltips
 * disableAutoScroll *[boolean]* - setting for don't scroll to view guide/tooltip into element
+* showGuidesCounter *[boolean]* - setting for show a guide counter in the modal and guides/tooltips
 
 ### Guide
 

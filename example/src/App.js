@@ -46,7 +46,13 @@ const guides = [
 ];
 
 const App = () => (
-  <UserGuide buttonConfig={buttonConfig} guides={guides} skipModal={false} disableAutoScroll={false}>  
+  <UserGuide
+    buttonConfig={buttonConfig}
+    guides={guides}
+    skipModal={false}
+    disableAutoScroll={false}
+    showGuidesCounter={false}
+  >
     <div style={style} className="unique-classname">Target element</div>
   </UserGuide>
 );

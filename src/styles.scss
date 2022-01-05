@@ -1,6 +1,7 @@
 $borderColor: #eee;
 
 .userGuide {
+
   &Mask,
   &Modal {
     position: fixed;
@@ -26,7 +27,6 @@ $borderColor: #eee;
     }
   }
 
-
   &Message {
     position: absolute;
     top: -10000px;
@@ -42,7 +42,6 @@ $borderColor: #eee;
       position: absolute;
       transform: rotate(45deg);
     }
-
 
     &Title {
       margin: 0 0 5px;
@@ -95,5 +94,10 @@ $borderColor: #eee;
         border-top: 1px solid $borderColor;
       }
     }
+  }
+
+  &Counter {
+    position: relative;
+    top: -10px;
   }
 }

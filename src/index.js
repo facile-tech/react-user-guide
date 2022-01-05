@@ -54,6 +54,10 @@ class HelpText extends Component {
       PropTypes.string,
     ]),
     disableAutoScroll: PropTypes.bool,
+    guidesCounter: PropTypes.shape({
+      show: PropTypes.bool,
+      text: PropTypes.string,
+    }),
   }
 
   static defaultProps = {
@@ -100,6 +104,7 @@ class HelpText extends Component {
       nextText,
       skipText,
       finishText,
+      guidesCounter,
     } = this.props;
 
     const node = createElement('span', `userGuide--message ${styles.userGuideMessage} ${styles[`userGuideMessage${position}`]}`, '');
@@ -108,6 +113,11 @@ class HelpText extends Component {
     const nextButton = createElement('button', isLast ? 'finish' : 'next', isLast ? finishText : nextText);
 
     nextButton.addEventListener('click', onNext);
+
+    if (guidesCounter.show) {
+      const counter = createElement('span', styles.userGuideCounter, guidesCounter.text);
+      node.appendChild(counter);
+    }
 
     node.appendChild(titleEl);
     node.appendChild(messageEl);
@@ -248,9 +258,10 @@ class UserGuide extends Component {
       PropTypes.array,
       PropTypes.element,
       PropTypes.string,
-    ]),    
-    skipModal: PropTypes.bool,    
+    ]),
+    skipModal: PropTypes.bool,
     disableAutoScroll: PropTypes.bool,
+    showGuidesCounter: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -258,13 +269,14 @@ class UserGuide extends Component {
     guides: [],
     title: 'Quick Guide',
     content: 'Would you like us to walk you through different features in this app?',
-    buttonConfig: defaultButtonConfig,    
-    skipModal: false,    
+    buttonConfig: defaultButtonConfig,
+    skipModal: false,
     disableAutoScroll: false,
+    showGuidesCounter: false,
   }
 
   constructor(props) {
-    super(props);    
+    super(props);
 
     this.state = {
       helpIndex: 0,
@@ -345,6 +357,7 @@ class UserGuide extends Component {
       content,
       skipModal,
       disableAutoScroll,
+      showGuidesCounter,
     } = this.props;
     const { helpIndex, acceptedConfirm } = this.state;
     const helpConfig = guides[helpIndex] || {};
@@ -360,6 +373,7 @@ class UserGuide extends Component {
           {children || ''}
           <div className={`userGuide--modal ${styles.userGuideModal}`}>
             <div className={styles.userGuideModalContent}>
+              {showGuidesCounter && (<span className={styles.userGuideCounter}>1/{guides.length + 1}</span>)}
               <h1 className={styles.userGuideModalHeader}>{title}</h1>
               <p>{content}</p>
               <div>
@@ -384,7 +398,12 @@ class UserGuide extends Component {
         onNext={this.onNext}
         onSkip={this.onSkip}
         isLast={isLast}
-        disableAutoScroll={disableAutoScroll}>
+        disableAutoScroll={disableAutoScroll}
+        guidesCounter={{
+          show: showGuidesCounter,
+          text: (helpIndex + (skipModal ? 1 : 2)) + '/' + (guides.length + (skipModal ? 0 : 1))
+        }}
+      >
         {children || ''}
       </HelpText>
     );
