@@ -141,33 +141,33 @@ class HelpText extends Component {
       const nodeMargin = 10;
 
       switch (position) {
-      case 'east':
-        this.node = applyStyle(this.node, {
-          left: `${nodeMargin + helpNeededElLeft + helpNeededElWidth}px`,
-          top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
-        });
-        break;
-      case 'west':
-        this.node = applyStyle(this.node, {
-          left: `${helpNeededElLeft - nodeWidth - nodeMargin}px`,
-          top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
-        });
-        break;
-      case 'north':
-        this.node = applyStyle(this.node, {
-          left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
-          top: `${helpNeededElTop - nodeHeight - nodeMargin}px`,
-        });
-        break;
-      case 'south':
-        this.node = applyStyle(this.node, {
-          left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
-          top: `${helpNeededElTop + helpNeededElHeight + nodeMargin}px`,
-        });
-        break;
+        case 'east':
+          this.node = applyStyle(this.node, {
+            left: `${nodeMargin + helpNeededElLeft + helpNeededElWidth}px`,
+            top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
+          });
+          break;
+        case 'west':
+          this.node = applyStyle(this.node, {
+            left: `${helpNeededElLeft - nodeWidth - nodeMargin}px`,
+            top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
+          });
+          break;
+        case 'north':
+          this.node = applyStyle(this.node, {
+            left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
+            top: `${helpNeededElTop - nodeHeight - nodeMargin}px`,
+          });
+          break;
+        case 'south':
+          this.node = applyStyle(this.node, {
+            left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
+            top: `${helpNeededElTop + helpNeededElHeight + nodeMargin}px`,
+          });
+          break;
 
-      default:
-        break;
+        default:
+          break;
       }
     }
   }
@@ -246,6 +246,7 @@ class UserGuide extends Component {
       PropTypes.element,
       PropTypes.string,
     ]),
+    guidesOnSkipOrFinish: PropTypes.array,
   }
 
   static defaultProps = {
@@ -253,7 +254,8 @@ class UserGuide extends Component {
     guides: [],
     title: 'Quick Guide',
     content: 'Would you like us to walk you through different features in this app?',
-    buttonConfig: defaultButtonConfig
+    buttonConfig: defaultButtonConfig,
+    guidesOnSkipOrFinish: [],
   }
 
   constructor(props) {
@@ -261,10 +263,12 @@ class UserGuide extends Component {
 
     this.state = {
       helpIndex: 0,
-      acceptedConfirm: false
+      acceptedConfirm: false,
+      finishIndex: 0,
     };
 
     this.userGuideDisabledFromBegenning = !!win.localStorage.getItem(`userGuide-${props.guideKey}`);
+    //this.userFinishGuide = guidesOnSkipOrFinish.length === 0 || this.userGuideDisabledFromBegenning;
 
     this.onSkip = this.onSkip.bind(this);
     this.onNext = this.onNext.bind(this);
@@ -272,25 +276,49 @@ class UserGuide extends Component {
   }
 
   onSkip() {
-    const { guides, guideKey } = this.props;
+    const { guides } = this.props;
 
-    win.localStorage.setItem(`userGuide-${guideKey}`, true);
+    if (this.state.helpIndex === guides.length) {
+      const { guidesOnSkipOrFinish } = this.props;
 
-    this.setState({
-      helpIndex: guides.length
-    });
+      this.setState({
+        finishIndex: guidesOnSkipOrFinish.length
+      });
+    } else {
+      const { guideKey } = this.props;
+
+      win.localStorage.setItem(`userGuide-${guideKey}`, true);
+
+      this.setState({
+        helpIndex: guides.length
+      });
+    }
   }
 
   onNext() {
     const { guides } = this.props;
-    const newHelpIndex = this.state.helpIndex + 1;
 
-    if (newHelpIndex > guides.length - 1) {
-      this.onSkip();
+    if (this.state.helpIndex === guides.length) {
+      const { guidesOnSkipOrFinish } = this.props;
+      const newFinishIndex = this.state.finishIndex + 1;
+
+      if (newFinishIndex > guidesOnSkipOrFinish.length - 1) {
+        this.onSkip();
+      } else {
+        this.setState({
+          finishIndex: newFinishIndex
+        });
+      }
     } else {
-      this.setState({
-        helpIndex: newHelpIndex
-      });
+      const newHelpIndex = this.state.helpIndex + 1;
+
+      if (newHelpIndex > guides.length - 1) {
+        this.onSkip();
+      } else {
+        this.setState({
+          helpIndex: newHelpIndex
+        });
+      }
     }
   }
 
@@ -336,13 +364,18 @@ class UserGuide extends Component {
       guides,
       title,
       content,
+      guidesOnSkipOrFinish,
     } = this.props;
-    const { helpIndex, acceptedConfirm } = this.state;
+    const { helpIndex, acceptedConfirm, finishIndex } = this.state;
     const helpConfig = guides[helpIndex] || {};
     const isLast = helpIndex === (guides.length - 1);
+    const helpConfigOnSkipOrFinish = guidesOnSkipOrFinish[finishIndex] || {};
+    const isLastFinishGuide = finishIndex === (guidesOnSkipOrFinish.length - 1);
 
     if (this.userGuideDisabledFromBegenning) {
+      //if (this.userFinishGuide) {
       return children || '';
+      //}      
     }
 
     if (helpIndex === 0 && !acceptedConfirm) {
@@ -364,6 +397,20 @@ class UserGuide extends Component {
             </div>
           </div>
         </Fragment>
+      );
+    }
+
+    if (helpIndex === guides.length) {
+      return (
+        <HelpText {...helpConfigOnSkipOrFinish}
+          nextText={this.getNextText()}
+          skipText={this.getSkipText()}
+          finishText={this.getFinishText()}
+          onNext={this.onNext}
+          onSkip={this.onSkip}
+          isLast={isLastFinishGuide}>
+          {children || ''}
+        </HelpText>
       );
     }
 

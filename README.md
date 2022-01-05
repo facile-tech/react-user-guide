@@ -58,10 +58,38 @@ const guides = [
   }
 ];
 
+const guidesOnSkipOrFinish = [
+  {
+    querySelector: '.unique-classname',
+    position: 'east',
+    title: 'First Finish',
+    message: 'User finish guide position \'east\''
+  },
+  {
+    querySelector: '.unique-classname',
+    position: 'west',
+    title: 'Second Finish',
+    message: 'User finish guide position \'west\''
+  },
+  {
+    querySelector: '.unique-classname',
+    position: 'north',
+    title: 'Third Finish',
+    message: 'User finish guide position \'north\''
+  },
+  {
+    querySelector: '.unique-classname',
+    tooltipWidth: 500,
+    position: 'south',
+    title: 'Forth Finish',
+    message: 'User finish guide position \'south\', with custom width'
+  }
+];
+
 export default class App extends Component {
   render () {
     return (
-      <UserGuide buttonConfig={buttonConfig} guides={guides}>
+      <UserGuide buttonConfig={buttonConfig} guides={guides} guidesOnSkipOrFinish={guidesOnSkipOrFinish}>
         <div style={style} className="unique-classname">Target element</div>
       </UserGuide>
     )
@@ -124,6 +152,7 @@ export default class App extends Component {
 * title *[string]* - Title used in Modal (default = 'Quick Guide')
 * content *[string]* - Content used in Modal (default = 'Would you like us to walk you through different features in this app?')
 * buttonConfig *[ButtonConfig]* - Text used by different buttons
+* guidesOnSkipOrFinish *[Guide]* - array of all guides/tooltips that will show when user click on skip or finish
 
 ### Guide
 

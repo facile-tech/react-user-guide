@@ -45,8 +45,36 @@ const guides = [
   }
 ];
 
+const guidesOnSkipOrFinish = [
+  {
+    querySelector: '.unique-classname',
+    position: 'east',
+    title: 'First Finish',
+    message: 'User finish guide position \'east\''
+  },
+  {
+    querySelector: '.unique-classname',
+    position: 'west',
+    title: 'Second Finish',
+    message: 'User finish guide position \'west\''
+  },
+  {
+    querySelector: '.unique-classname',
+    position: 'north',
+    title: 'Third Finish',
+    message: 'User finish guide position \'north\''
+  },
+  {
+    querySelector: '.unique-classname',
+    tooltipWidth: 500,
+    position: 'south',
+    title: 'Forth Finish',
+    message: 'User finish guide position \'south\', with custom width'
+  }
+];
+
 const App = () => (
-  <UserGuide buttonConfig={buttonConfig} guides={guides}>
+  <UserGuide buttonConfig={buttonConfig} guides={guides} guidesOnSkipOrFinish={guidesOnSkipOrFinish}>
     <div style={style} className="unique-classname">Target element</div>
   </UserGuide>
 );
