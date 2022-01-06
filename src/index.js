@@ -58,6 +58,7 @@ class HelpText extends Component {
       show: PropTypes.bool,
       text: PropTypes.string,
     }),
+    showCloseButton: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -65,6 +66,7 @@ class HelpText extends Component {
     position: 'north',
     isLast: false,
     disableAutoScroll: false,
+    showCloseButton: false,
   }
 
   constructor(props) {
@@ -105,6 +107,7 @@ class HelpText extends Component {
       skipText,
       finishText,
       guidesCounter,
+      showCloseButton,
     } = this.props;
 
     const node = createElement('span', `userGuide--message ${styles.userGuideMessage} ${styles[`userGuideMessage${position}`]}`, '');
@@ -119,10 +122,17 @@ class HelpText extends Component {
       node.appendChild(counter);
     }
 
+    if (!isLast && showCloseButton) {
+      const closeButton = createElement('span', styles.userGuideCloseButton, '');
+
+      closeButton.addEventListener('click', onSkip);
+      node.appendChild(closeButton);
+    }
+
     node.appendChild(titleEl);
     node.appendChild(messageEl);
 
-    if (!isLast) {
+    if (!isLast && !showCloseButton) {
       const skipButton = createElement('button', 'skip', skipText);
 
       skipButton.addEventListener('click', onSkip);
@@ -262,6 +272,7 @@ class UserGuide extends Component {
     skipModal: PropTypes.bool,
     disableAutoScroll: PropTypes.bool,
     showGuidesCounter: PropTypes.bool,
+    showCloseButton: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -273,6 +284,7 @@ class UserGuide extends Component {
     skipModal: false,
     disableAutoScroll: false,
     showGuidesCounter: false,
+    showCloseButton: false,
   }
 
   constructor(props) {
@@ -358,6 +370,7 @@ class UserGuide extends Component {
       skipModal,
       disableAutoScroll,
       showGuidesCounter,
+      showCloseButton,
     } = this.props;
     const { helpIndex, acceptedConfirm } = this.state;
     const helpConfig = guides[helpIndex] || {};
@@ -374,19 +387,22 @@ class UserGuide extends Component {
           <div className={`userGuide--modal ${styles.userGuideModal}`}>
             <div className={styles.userGuideModalContent}>
               {showGuidesCounter && (<span className={styles.userGuideCounter}>1/{guides.length + 1}</span>)}
+              {showCloseButton && (<span className={styles.userGuideCloseButton} onClick={this.onSkip} />)}
               <h1 className={styles.userGuideModalHeader}>{title}</h1>
               <p>{content}</p>
               <div>
-                <button onClick={this.onSkip}>
-                  {this.getNoText()}
-                </button>
+                {!showCloseButton && (
+                  <button onClick={this.onSkip}>
+                    {this.getNoText()}
+                  </button>
+                )}
                 <button onClick={this.acceptConfirm}>
                   {this.getYesText()}
                 </button>
               </div>
-            </div>
-          </div>
-        </Fragment>
+            </div >
+          </div >
+        </Fragment >
       );
     }
 
@@ -403,6 +419,7 @@ class UserGuide extends Component {
           show: showGuidesCounter,
           text: (helpIndex + (skipModal ? 1 : 2)) + '/' + (guides.length + (skipModal ? 0 : 1))
         }}
+        showCloseButton={showCloseButton}
       >
         {children || ''}
       </HelpText>

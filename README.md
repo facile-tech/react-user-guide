@@ -67,7 +67,8 @@ export default class App extends Component {
         skipModal={false} 
         disableAutoScroll={false} 
         showGuidesCounter={false}
-      >            
+        showCloseButton={false}
+      >                  
         <div style={style} className="unique-classname">Target element</div>
       </UserGuide>
     )
@@ -133,6 +134,7 @@ export default class App extends Component {
 * skipModal *[boolean]* - setting for don't show the Modal, only guides/tooltips
 * disableAutoScroll *[boolean]* - setting for don't scroll to view guide/tooltip into element
 * showGuidesCounter *[boolean]* - setting for show a guide counter in the modal and guides/tooltips
+* showCloseButton *[boolean]* - setting for show a close button instead of the skip button in modal and guides/tooltip
 
 ### Guide
 

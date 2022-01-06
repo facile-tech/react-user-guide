@@ -100,4 +100,22 @@ $borderColor: #eee;
     position: relative;
     top: -10px;
   }
+
+  &CloseButton {
+    position: relative;
+    top: -15px;
+    right: -15px;
+    float: right;
+    padding: 1px 5px;
+    background: #ccc;
+    cursor: pointer;
+
+    &:after {
+      content: 'x';
+    }
+
+    &:hover {
+      color: #fff;
+    }
+  }
 }

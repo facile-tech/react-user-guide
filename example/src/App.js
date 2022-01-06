@@ -52,6 +52,7 @@ const App = () => (
     skipModal={false}
     disableAutoScroll={false}
     showGuidesCounter={false}
+    showCloseButton={false}
   >
     <div style={style} className="unique-classname">Target element</div>
   </UserGuide>
