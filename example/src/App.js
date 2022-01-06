@@ -46,7 +46,7 @@ const guides = [
 ];
 
 const App = () => (
-  <UserGuide buttonConfig={buttonConfig} guides={guides}>
+  <UserGuide buttonConfig={buttonConfig} guides={guides} showCloseButton={false}>
     <div style={style} className="unique-classname">Target element</div>
   </UserGuide>
 );

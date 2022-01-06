@@ -53,12 +53,14 @@ class HelpText extends Component {
       PropTypes.element,
       PropTypes.string,
     ]),
+    showCloseButton: PropTypes.bool,
   }
 
   static defaultProps = {
     tooltipWidth: 240,
     position: 'north',
-    isLast: false
+    isLast: false,
+    showCloseButton: false
   }
 
   constructor(props) {
@@ -98,6 +100,7 @@ class HelpText extends Component {
       nextText,
       skipText,
       finishText,
+      showCloseButton,
     } = this.props;
 
     const node = createElement('span', `userGuide--message ${styles.userGuideMessage} ${styles[`userGuideMessage${position}`]}`, '');
@@ -107,10 +110,17 @@ class HelpText extends Component {
 
     nextButton.addEventListener('click', onNext);
 
+    if (!isLast && showCloseButton) {
+      const closeButton = createElement('span', styles.userGuideCloseButton, '');
+
+      closeButton.addEventListener('click', onSkip);
+      node.appendChild(closeButton);
+    }
+
     node.appendChild(titleEl);
     node.appendChild(messageEl);
 
-    if (!isLast) {
+    if (!isLast && !showCloseButton) {
       const skipButton = createElement('button', 'skip', skipText);
 
       skipButton.addEventListener('click', onSkip);
@@ -141,33 +151,33 @@ class HelpText extends Component {
       const nodeMargin = 10;
 
       switch (position) {
-      case 'east':
-        this.node = applyStyle(this.node, {
-          left: `${nodeMargin + helpNeededElLeft + helpNeededElWidth}px`,
-          top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
-        });
-        break;
-      case 'west':
-        this.node = applyStyle(this.node, {
-          left: `${helpNeededElLeft - nodeWidth - nodeMargin}px`,
-          top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
-        });
-        break;
-      case 'north':
-        this.node = applyStyle(this.node, {
-          left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
-          top: `${helpNeededElTop - nodeHeight - nodeMargin}px`,
-        });
-        break;
-      case 'south':
-        this.node = applyStyle(this.node, {
-          left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
-          top: `${helpNeededElTop + helpNeededElHeight + nodeMargin}px`,
-        });
-        break;
+        case 'east':
+          this.node = applyStyle(this.node, {
+            left: `${nodeMargin + helpNeededElLeft + helpNeededElWidth}px`,
+            top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
+          });
+          break;
+        case 'west':
+          this.node = applyStyle(this.node, {
+            left: `${helpNeededElLeft - nodeWidth - nodeMargin}px`,
+            top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
+          });
+          break;
+        case 'north':
+          this.node = applyStyle(this.node, {
+            left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
+            top: `${helpNeededElTop - nodeHeight - nodeMargin}px`,
+          });
+          break;
+        case 'south':
+          this.node = applyStyle(this.node, {
+            left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
+            top: `${helpNeededElTop + helpNeededElHeight + nodeMargin}px`,
+          });
+          break;
 
-      default:
-        break;
+        default:
+          break;
       }
     }
   }
@@ -246,6 +256,7 @@ class UserGuide extends Component {
       PropTypes.element,
       PropTypes.string,
     ]),
+    showCloseButton: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -253,7 +264,8 @@ class UserGuide extends Component {
     guides: [],
     title: 'Quick Guide',
     content: 'Would you like us to walk you through different features in this app?',
-    buttonConfig: defaultButtonConfig
+    buttonConfig: defaultButtonConfig,
+    showCloseButton: false,
   }
 
   constructor(props) {
@@ -336,6 +348,7 @@ class UserGuide extends Component {
       guides,
       title,
       content,
+      showCloseButton,
     } = this.props;
     const { helpIndex, acceptedConfirm } = this.state;
     const helpConfig = guides[helpIndex] || {};
@@ -351,12 +364,15 @@ class UserGuide extends Component {
           {children || ''}
           <div className={`userGuide--modal ${styles.userGuideModal}`}>
             <div className={styles.userGuideModalContent}>
+              {showCloseButton && (<span className={styles.userGuideCloseButton} onClick={this.onSkip}/>)}
               <h1 className={styles.userGuideModalHeader}>{title}</h1>
               <p>{content}</p>
               <div>
-                <button onClick={this.onSkip}>
-                  {this.getNoText()}
-                </button>
+                {!showCloseButton && (
+                  <button onClick={this.onSkip}>
+                    {this.getNoText()}
+                  </button>
+                )}
                 <button onClick={this.acceptConfirm}>
                   {this.getYesText()}
                 </button>
@@ -368,7 +384,15 @@ class UserGuide extends Component {
     }
 
     return (
-      <HelpText {...helpConfig} nextText={this.getNextText()} skipText={this.getSkipText()} finishText={this.getFinishText()} onNext={this.onNext} onSkip={this.onSkip} isLast={isLast}>
+      <HelpText {...helpConfig}
+        nextText={this.getNextText()}
+        skipText={this.getSkipText()}
+        finishText={this.getFinishText()}
+        onNext={this.onNext}
+        onSkip={this.onSkip}
+        isLast={isLast}
+        showCloseButton={showCloseButton}
+      >
         {children || ''}
       </HelpText>
     );
