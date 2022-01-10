@@ -48,7 +48,10 @@ const guides = [
 const App = () => (
   <UserGuide
     buttonConfig={buttonConfig}
-    guides={guides}    
+    guides={guides}
+    callbackOnStart={() => { console.log("started"); }}
+    callbackOnSkip={() => { console.log("skipped"); }}
+    callbackOnFinish={() => { console.log("finished") }}
   >
     <div style={style} className="unique-classname">Target element</div>
   </UserGuide>
