@@ -53,6 +53,9 @@ const App = () => (
     disableAutoScroll={false}
     showGuidesCounter={false}
     showCloseButton={false}
+    callbackOnStart={() => { console.log("started") }}
+    callbackOnSkip={() => { console.log("skipped") }}
+    callbackOnFinish={() => { console.log("finished") }}
   >
     <div style={style} className="unique-classname">Target element</div>
   </UserGuide>

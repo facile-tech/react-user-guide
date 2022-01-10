@@ -67,8 +67,11 @@ export default class App extends Component {
         skipModal={false} 
         disableAutoScroll={false} 
         showGuidesCounter={false}
-        showCloseButton={false}
-      >                  
+        showCloseButton={false}                  
+        callbackOnStart={() => { console.log("started") }}
+        callbackOnSkip={() => { console.log("skipped") }}
+        callbackOnFinish={() => { console.log("finished") }}
+      >
         <div style={style} className="unique-classname">Target element</div>
       </UserGuide>
     )
@@ -135,6 +138,9 @@ export default class App extends Component {
 * disableAutoScroll *[boolean]* - setting for don't scroll to view guide/tooltip into element
 * showGuidesCounter *[boolean]* - setting for show a guide counter in the modal and guides/tooltips
 * showCloseButton *[boolean]* - setting for show a close button instead of the skip button in modal and guides/tooltip
+* callbackOnStart *[function]* - callback function on start modal
+* callbackOnSkip *[function]* - callback function on skip modal or any guide
+* callbackOnFinish *[function]* - callback function on finish guides
 
 ### Guide
 

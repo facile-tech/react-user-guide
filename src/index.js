@@ -59,6 +59,7 @@ class HelpText extends Component {
       text: PropTypes.string,
     }),
     showCloseButton: PropTypes.bool,
+    onFinish: PropTypes.func,
   }
 
   static defaultProps = {
@@ -108,6 +109,7 @@ class HelpText extends Component {
       finishText,
       guidesCounter,
       showCloseButton,
+      onFinish,
     } = this.props;
 
     const node = createElement('span', `userGuide--message ${styles.userGuideMessage} ${styles[`userGuideMessage${position}`]}`, '');
@@ -137,7 +139,10 @@ class HelpText extends Component {
 
       skipButton.addEventListener('click', onSkip);
       node.appendChild(skipButton);
+    } else {
+      if (onFinish) nextButton.addEventListener('click', onFinish);
     }
+
     node.appendChild(nextButton);
 
     return applyStyle(node, {
@@ -273,6 +278,9 @@ class UserGuide extends Component {
     disableAutoScroll: PropTypes.bool,
     showGuidesCounter: PropTypes.bool,
     showCloseButton: PropTypes.bool,
+    callbackOnStart: PropTypes.func,
+    callbackOnSkip: PropTypes.func,
+    callbackOnFinish: PropTypes.func,
   }
 
   static defaultProps = {
@@ -371,6 +379,9 @@ class UserGuide extends Component {
       disableAutoScroll,
       showGuidesCounter,
       showCloseButton,
+      callbackOnStart,
+      callbackOnSkip,
+      callbackOnFinish,
     } = this.props;
     const { helpIndex, acceptedConfirm } = this.state;
     const helpConfig = guides[helpIndex] || {};
@@ -380,7 +391,11 @@ class UserGuide extends Component {
       return children || '';
     }
 
-    if (helpIndex === 0 && !acceptedConfirm && !skipModal) {
+    if (helpIndex === 0 && (!acceptedConfirm || skipModal)){
+      if (callbackOnStart) callbackOnStart();
+    }
+
+    if (helpIndex === 0 && !acceptedConfirm && !skipModal) {      
       return (
         <Fragment>
           {children || ''}
@@ -392,7 +407,10 @@ class UserGuide extends Component {
               <p>{content}</p>
               <div>
                 {!showCloseButton && (
-                  <button onClick={this.onSkip}>
+                  <button onClick={() => {
+                    this.onSkip();
+                    if (callbackOnSkip) callbackOnSkip();
+                  }}>
                     {this.getNoText()}
                   </button>
                 )}
@@ -412,14 +430,18 @@ class UserGuide extends Component {
         skipText={this.getSkipText()}
         finishText={this.getFinishText()}
         onNext={this.onNext}
-        onSkip={this.onSkip}
-        isLast={isLast}
+        onSkip={() => {
+          this.onSkip();
+          if (callbackOnSkip) callbackOnSkip();
+        }}
+        isLast={isLast}        
         disableAutoScroll={disableAutoScroll}
         guidesCounter={{
           show: showGuidesCounter,
           text: (helpIndex + (skipModal ? 1 : 2)) + '/' + (guides.length + (skipModal ? 0 : 1))
         }}
         showCloseButton={showCloseButton}
+        onFinish={callbackOnFinish}
       >
         {children || ''}
       </HelpText>
