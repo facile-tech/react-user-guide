@@ -53,6 +53,7 @@ class HelpText extends Component {
       PropTypes.element,
       PropTypes.string,
     ]),
+    onFinish: PropTypes.func,
   }
 
   static defaultProps = {
@@ -98,6 +99,7 @@ class HelpText extends Component {
       nextText,
       skipText,
       finishText,
+      onFinish,
     } = this.props;
 
     const node = createElement('span', `userGuide--message ${styles.userGuideMessage} ${styles[`userGuideMessage${position}`]}`, '');
@@ -115,7 +117,10 @@ class HelpText extends Component {
 
       skipButton.addEventListener('click', onSkip);
       node.appendChild(skipButton);
+    } else {
+      if (onFinish) nextButton.addEventListener('click', onFinish);
     }
+
     node.appendChild(nextButton);
 
     return applyStyle(node, {
@@ -141,33 +146,33 @@ class HelpText extends Component {
       const nodeMargin = 10;
 
       switch (position) {
-      case 'east':
-        this.node = applyStyle(this.node, {
-          left: `${nodeMargin + helpNeededElLeft + helpNeededElWidth}px`,
-          top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
-        });
-        break;
-      case 'west':
-        this.node = applyStyle(this.node, {
-          left: `${helpNeededElLeft - nodeWidth - nodeMargin}px`,
-          top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
-        });
-        break;
-      case 'north':
-        this.node = applyStyle(this.node, {
-          left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
-          top: `${helpNeededElTop - nodeHeight - nodeMargin}px`,
-        });
-        break;
-      case 'south':
-        this.node = applyStyle(this.node, {
-          left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
-          top: `${helpNeededElTop + helpNeededElHeight + nodeMargin}px`,
-        });
-        break;
+        case 'east':
+          this.node = applyStyle(this.node, {
+            left: `${nodeMargin + helpNeededElLeft + helpNeededElWidth}px`,
+            top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
+          });
+          break;
+        case 'west':
+          this.node = applyStyle(this.node, {
+            left: `${helpNeededElLeft - nodeWidth - nodeMargin}px`,
+            top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
+          });
+          break;
+        case 'north':
+          this.node = applyStyle(this.node, {
+            left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
+            top: `${helpNeededElTop - nodeHeight - nodeMargin}px`,
+          });
+          break;
+        case 'south':
+          this.node = applyStyle(this.node, {
+            left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
+            top: `${helpNeededElTop + helpNeededElHeight + nodeMargin}px`,
+          });
+          break;
 
-      default:
-        break;
+        default:
+          break;
       }
     }
   }
@@ -246,6 +251,9 @@ class UserGuide extends Component {
       PropTypes.element,
       PropTypes.string,
     ]),
+    callbackOnStart: PropTypes.func,
+    callbackOnSkip: PropTypes.func,
+    callbackOnFinish: PropTypes.func,
   }
 
   static defaultProps = {
@@ -336,6 +344,9 @@ class UserGuide extends Component {
       guides,
       title,
       content,
+      callbackOnStart,
+      callbackOnSkip,
+      callbackOnFinish,
     } = this.props;
     const { helpIndex, acceptedConfirm } = this.state;
     const helpConfig = guides[helpIndex] || {};
@@ -346,6 +357,7 @@ class UserGuide extends Component {
     }
 
     if (helpIndex === 0 && !acceptedConfirm) {
+      if (callbackOnStart) callbackOnStart();
       return (
         <Fragment>
           {children || ''}
@@ -354,7 +366,10 @@ class UserGuide extends Component {
               <h1 className={styles.userGuideModalHeader}>{title}</h1>
               <p>{content}</p>
               <div>
-                <button onClick={this.onSkip}>
+                <button onClick={() => {
+                  this.onSkip();
+                  if (callbackOnSkip) callbackOnSkip();
+                }}>
                   {this.getNoText()}
                 </button>
                 <button onClick={this.acceptConfirm}>
@@ -368,7 +383,18 @@ class UserGuide extends Component {
     }
 
     return (
-      <HelpText {...helpConfig} nextText={this.getNextText()} skipText={this.getSkipText()} finishText={this.getFinishText()} onNext={this.onNext} onSkip={this.onSkip} isLast={isLast}>
+      <HelpText {...helpConfig}
+        nextText={this.getNextText()}
+        skipText={this.getSkipText()}
+        finishText={this.getFinishText()}
+        onNext={this.onNext}
+        onSkip={() => {
+          this.onSkip();
+          if (callbackOnSkip) callbackOnSkip();
+        }}
+        isLast={isLast}
+        onFinish={callbackOnFinish}
+      >
         {children || ''}
       </HelpText>
     );

@@ -61,7 +61,13 @@ const guides = [
 export default class App extends Component {
   render () {
     return (
-      <UserGuide buttonConfig={buttonConfig} guides={guides}>
+      <UserGuide 
+        buttonConfig={buttonConfig} 
+        guides={guides} 
+        callbackOnStart={() => { console.log("started"); }}
+        callbackOnSkip={() => { console.log("skipped"); }}
+        callbackOnFinish={() => { console.log("finished") }}
+      >
         <div style={style} className="unique-classname">Target element</div>
       </UserGuide>
     )
@@ -124,6 +130,9 @@ export default class App extends Component {
 * title *[string]* - Title used in Modal (default = 'Quick Guide')
 * content *[string]* - Content used in Modal (default = 'Would you like us to walk you through different features in this app?')
 * buttonConfig *[ButtonConfig]* - Text used by different buttons
+* callbackOnStart *[function]* - callback function on start modal
+* callbackOnSkip *[function]* - callback function on skip modal or any guide
+* callbackOnFinish *[function]* - callback function on finish guides
 
 ### Guide
 
