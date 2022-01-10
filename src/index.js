@@ -139,9 +139,9 @@ class HelpText extends Component {
 
       skipButton.addEventListener('click', onSkip);
       node.appendChild(skipButton);
-    } else {
-      if (onFinish) nextButton.addEventListener('click', onFinish);
     }
+
+    if (isLast && onFinish) nextButton.addEventListener('click', onFinish);
 
     node.appendChild(nextButton);
 
@@ -391,18 +391,25 @@ class UserGuide extends Component {
       return children || '';
     }
 
-    if (helpIndex === 0 && (!acceptedConfirm || skipModal)){
+    if (helpIndex === 0 && (!acceptedConfirm || skipModal)) {
       if (callbackOnStart) callbackOnStart();
     }
 
-    if (helpIndex === 0 && !acceptedConfirm && !skipModal) {      
+    if (helpIndex === 0 && !acceptedConfirm && !skipModal) {
       return (
         <Fragment>
           {children || ''}
           <div className={`userGuide--modal ${styles.userGuideModal}`}>
             <div className={styles.userGuideModalContent}>
               {showGuidesCounter && (<span className={styles.userGuideCounter}>1/{guides.length + 1}</span>)}
-              {showCloseButton && (<span className={styles.userGuideCloseButton} onClick={this.onSkip} />)}
+              {showCloseButton && (
+                <span className={styles.userGuideCloseButton}
+                  onClick={() => {
+                    this.onSkip();
+                    if (callbackOnSkip) callbackOnSkip();
+                  }}
+                />
+              )}
               <h1 className={styles.userGuideModalHeader}>{title}</h1>
               <p>{content}</p>
               <div>
@@ -434,7 +441,7 @@ class UserGuide extends Component {
           this.onSkip();
           if (callbackOnSkip) callbackOnSkip();
         }}
-        isLast={isLast}        
+        isLast={isLast}
         disableAutoScroll={disableAutoScroll}
         guidesCounter={{
           show: showGuidesCounter,
