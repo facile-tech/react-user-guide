@@ -53,12 +53,14 @@ class HelpText extends Component {
       PropTypes.element,
       PropTypes.string,
     ]),
+    autoScrollType: PropTypes.number,
   }
 
   static defaultProps = {
     tooltipWidth: 240,
     position: 'north',
-    isLast: false
+    isLast: false,
+    autoScrollType: 1,
   }
 
   constructor(props) {
@@ -141,33 +143,33 @@ class HelpText extends Component {
       const nodeMargin = 10;
 
       switch (position) {
-      case 'east':
-        this.node = applyStyle(this.node, {
-          left: `${nodeMargin + helpNeededElLeft + helpNeededElWidth}px`,
-          top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
-        });
-        break;
-      case 'west':
-        this.node = applyStyle(this.node, {
-          left: `${helpNeededElLeft - nodeWidth - nodeMargin}px`,
-          top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
-        });
-        break;
-      case 'north':
-        this.node = applyStyle(this.node, {
-          left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
-          top: `${helpNeededElTop - nodeHeight - nodeMargin}px`,
-        });
-        break;
-      case 'south':
-        this.node = applyStyle(this.node, {
-          left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
-          top: `${helpNeededElTop + helpNeededElHeight + nodeMargin}px`,
-        });
-        break;
+        case 'east':
+          this.node = applyStyle(this.node, {
+            left: `${nodeMargin + helpNeededElLeft + helpNeededElWidth}px`,
+            top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
+          });
+          break;
+        case 'west':
+          this.node = applyStyle(this.node, {
+            left: `${helpNeededElLeft - nodeWidth - nodeMargin}px`,
+            top: `${helpNeededElTop + (helpNeededElHeight / 2 - nodeHeight / 2)}px`,
+          });
+          break;
+        case 'north':
+          this.node = applyStyle(this.node, {
+            left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
+            top: `${helpNeededElTop - nodeHeight - nodeMargin}px`,
+          });
+          break;
+        case 'south':
+          this.node = applyStyle(this.node, {
+            left: `${helpNeededElLeft + (helpNeededElWidth / 2 - nodeWidth / 2)}px`,
+            top: `${helpNeededElTop + helpNeededElHeight + nodeMargin}px`,
+          });
+          break;
 
-      default:
-        break;
+        default:
+          break;
       }
     }
   }
@@ -180,7 +182,7 @@ class HelpText extends Component {
       delete this.helpNeededDOM;
     }
 
-    const { querySelector, onNext } = this.props;
+    const { querySelector, onNext, autoScrollType } = this.props;
 
     if (querySelector) {
       const helpNeededDOM = document.querySelector(querySelector);
@@ -194,7 +196,19 @@ class HelpText extends Component {
         };
 
         // Bring it to view if needed
-        helpNeededDOM.scrollIntoView();
+        let block;
+        switch (autoScrollType) {
+          case 1:
+            block = "start";
+            break;
+          case 2:
+            block = "end";
+            break;
+          case 3:
+            block = "center";
+            break;
+        }
+        helpNeededDOM.scrollIntoView({ block });
 
         // Bring it above the mask so it is not behind transparent background
         helpNeededDOM.style.position = 'relative';
@@ -246,6 +260,7 @@ class UserGuide extends Component {
       PropTypes.element,
       PropTypes.string,
     ]),
+    autoScrollType: PropTypes.number,
   }
 
   static defaultProps = {
@@ -253,7 +268,8 @@ class UserGuide extends Component {
     guides: [],
     title: 'Quick Guide',
     content: 'Would you like us to walk you through different features in this app?',
-    buttonConfig: defaultButtonConfig
+    buttonConfig: defaultButtonConfig,
+    autoScrollType: 1,
   }
 
   constructor(props) {
@@ -336,6 +352,7 @@ class UserGuide extends Component {
       guides,
       title,
       content,
+      autoScrollType,
     } = this.props;
     const { helpIndex, acceptedConfirm } = this.state;
     const helpConfig = guides[helpIndex] || {};
@@ -368,7 +385,15 @@ class UserGuide extends Component {
     }
 
     return (
-      <HelpText {...helpConfig} nextText={this.getNextText()} skipText={this.getSkipText()} finishText={this.getFinishText()} onNext={this.onNext} onSkip={this.onSkip} isLast={isLast}>
+      <HelpText {...helpConfig}
+        nextText={this.getNextText()}
+        skipText={this.getSkipText()}
+        finishText={this.getFinishText()}
+        onNext={this.onNext}
+        onSkip={this.onSkip}
+        isLast={isLast}
+        autoScrollType={autoScrollType}
+      >
         {children || ''}
       </HelpText>
     );
