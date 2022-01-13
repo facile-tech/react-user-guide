@@ -71,7 +71,8 @@ export default class App extends Component {
         callbackOnStart={() => { console.log("started") }}
         callbackOnSkip={() => { console.log("skipped") }}
         callbackOnFinish={() => { console.log("finished") }}
-      >
+        autoScrollType={1}
+      >      
         <div style={style} className="unique-classname">Target element</div>
       </UserGuide>
     )
@@ -141,6 +142,7 @@ export default class App extends Component {
 * callbackOnStart *[function]* - callback function on start modal
 * callbackOnSkip *[function]* - callback function on skip modal or any guide
 * callbackOnFinish *[function]* - callback function on finish guides
+* autoScrollType *[int]* - type of auto scroll: 1- align to top, 2- align to bottom, 3- align to center (default = 1)
 
 ### Guide
 

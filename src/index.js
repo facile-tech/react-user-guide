@@ -60,6 +60,7 @@ class HelpText extends Component {
     }),
     showCloseButton: PropTypes.bool,
     onFinish: PropTypes.func,
+    autoScrollType: PropTypes.number,
   }
 
   static defaultProps = {
@@ -68,6 +69,7 @@ class HelpText extends Component {
     isLast: false,
     disableAutoScroll: false,
     showCloseButton: false,
+    autoScrollType: 1,
   }
 
   constructor(props) {
@@ -207,7 +209,7 @@ class HelpText extends Component {
       delete this.helpNeededDOM;
     }
 
-    const { querySelector, onNext, disableAutoScroll } = this.props;
+    const { querySelector, onNext, disableAutoScroll, autoScrollType } = this.props;
 
     if (querySelector) {
       const helpNeededDOM = document.querySelector(querySelector);
@@ -221,8 +223,21 @@ class HelpText extends Component {
         };
 
         // Bring it to view if needed
-        if (!disableAutoScroll)
-          helpNeededDOM.scrollIntoView();
+        if (!disableAutoScroll) {
+          let block;
+          switch (autoScrollType) {
+            case 1:
+              block = "start";
+              break;
+            case 2:
+              block = "end";
+              break;
+            case 3:
+              block = "center";
+              break;
+          }
+          helpNeededDOM.scrollIntoView({ block });
+        }
 
         // Bring it above the mask so it is not behind transparent background
         helpNeededDOM.style.position = 'relative';
@@ -281,6 +296,7 @@ class UserGuide extends Component {
     callbackOnStart: PropTypes.func,
     callbackOnSkip: PropTypes.func,
     callbackOnFinish: PropTypes.func,
+    autoScrollType: PropTypes.number,
   }
 
   static defaultProps = {
@@ -293,6 +309,7 @@ class UserGuide extends Component {
     disableAutoScroll: false,
     showGuidesCounter: false,
     showCloseButton: false,
+    autoScrollType: 1,
   }
 
   constructor(props) {
@@ -382,6 +399,7 @@ class UserGuide extends Component {
       callbackOnStart,
       callbackOnSkip,
       callbackOnFinish,
+      autoScrollType,
     } = this.props;
     const { helpIndex, acceptedConfirm } = this.state;
     const helpConfig = guides[helpIndex] || {};
@@ -448,7 +466,8 @@ class UserGuide extends Component {
           text: (helpIndex + (skipModal ? 1 : 2)) + '/' + (guides.length + (skipModal ? 0 : 1))
         }}
         showCloseButton={showCloseButton}
-        onFinish={callbackOnFinish}
+        onFinish={callbackOnFinish}        
+        autoScrollType={autoScrollType}
       >
         {children || ''}
       </HelpText>

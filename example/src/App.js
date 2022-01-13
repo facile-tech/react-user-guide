@@ -56,6 +56,7 @@ const App = () => (
     callbackOnStart={() => { console.log("started") }}
     callbackOnSkip={() => { console.log("skipped") }}
     callbackOnFinish={() => { console.log("finished") }}
+    autoScrollType={1}
   >
     <div style={style} className="unique-classname">Target element</div>
   </UserGuide>
