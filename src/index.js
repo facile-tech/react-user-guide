@@ -431,14 +431,12 @@ class UserGuide extends Component {
               <h1 className={styles.userGuideModalHeader}>{title}</h1>
               <p>{content}</p>
               <div>
-                {!showCloseButton && (
-                  <button onClick={() => {
-                    this.onSkip();
-                    if (callbackOnSkip) callbackOnSkip();
-                  }}>
-                    {this.getNoText()}
-                  </button>
-                )}
+                <button hidden={showCloseButton} onClick={() => {
+                  this.onSkip();
+                  if (callbackOnSkip) callbackOnSkip();
+                }}>
+                  {this.getNoText()}
+                </button>
                 <button onClick={this.acceptConfirm}>
                   {this.getYesText()}
                 </button>
@@ -466,7 +464,7 @@ class UserGuide extends Component {
           text: (helpIndex + (skipModal ? 1 : 2)) + '/' + (guides.length + (skipModal ? 0 : 1))
         }}
         showCloseButton={showCloseButton}
-        onFinish={callbackOnFinish}        
+        onFinish={callbackOnFinish}
         autoScrollType={autoScrollType}
       >
         {children || ''}
