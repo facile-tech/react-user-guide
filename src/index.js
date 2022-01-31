@@ -368,11 +368,9 @@ class UserGuide extends Component {
               <h1 className={styles.userGuideModalHeader}>{title}</h1>
               <p>{content}</p>
               <div>
-                {!showCloseButton && (
-                  <button onClick={this.onSkip}>
-                    {this.getNoText()}
-                  </button>
-                )}
+                <button hidden={showCloseButton} onClick={this.onSkip}>
+                  {this.getNoText()}
+                </button>
                 <button onClick={this.acceptConfirm}>
                   {this.getYesText()}
                 </button>
